@@ -8,6 +8,6 @@ const eventSchema = new mongoose.Schema({
   eventImage: { type: String, required: true },
 });
 
-const Event = mongoose.model('Event', eventSchema);
+const Customer_events = mongoose.model('Customer_events', eventSchema);
 
-module.exports = Event;
+module.exports = Customer_events;
