@@ -5,6 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const eventRoutes = require('./routes/eventRoutes');
 const authRoute = require('./routes/authRoute');
+const organiserRoutes = require('./routes/organiserdetails');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -18,6 +19,7 @@ app.use(express.json());
 // Routes
 app.use('/api/events', eventRoutes);
 app.use('/api/customer', authRoute);
+app.use("/api/organiserdetails", organiserRoutes);
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
