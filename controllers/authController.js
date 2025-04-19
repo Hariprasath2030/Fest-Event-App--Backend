@@ -15,7 +15,7 @@ const customerSignup = async (req, res) => {
         // Check if customer already exists
         const existingCustomer = await Customer.findOne({ email });
         if (existingCustomer) {
-            return res.status(400).json({ message: 'Organiser already exists' });
+            return res.status(400).json({ message: 'Customer already exists' });
         }
 
         // Hash the password
@@ -25,7 +25,7 @@ const customerSignup = async (req, res) => {
         const newCustomer = new Customer({ name, email, password: hashedPassword, phone, role: 'organiser' });
         await newCustomer.save();
 
-        res.status(201).json({ message: 'Organiser registered successfully', customer: newCustomer });
+        res.status(201).json({ message: 'Customer registered successfully', customer: newCustomer });
     } catch (error) {
         console.error('Error in customerSignup:', error);
         res.status(500).json({ message: 'Error in customer signup', error: error.message });
@@ -42,7 +42,7 @@ const customerLogin = async (req, res) => {
 
         const customer = await Customer.findOne({ email });
         if (!customer) {
-            return res.status(404).json({ message: 'Organiser not found' });
+            return res.status(404).json({ message: 'Customer not found' });
         }
 
         const isMatch = await bcrypt.compare(password, customer.password);
@@ -52,7 +52,7 @@ const customerLogin = async (req, res) => {
 
         const token = jwt.sign({ id: customer._id, role: customer.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.status(200).json({
-            message: 'Organiser logged in successfully',
+            message: 'Customer logged in successfully',
             token,
             customer: {
                 id: customer._id,
@@ -68,52 +68,59 @@ const customerLogin = async (req, res) => {
     }
 };
 
+// Get customer by ID
 const getCustomerById = async (req, res) => {
-    try { // Log the requested ID
-        const organiser = await Customer.find();
-        if (!organiser) {
-            console.log('Organiser not found'); // Debug message for not found
-            return res.status(404).json({ message: 'Organiser not found' });
+    try {
+        // Get customer by the ID provided in the URL parameter
+        const customer = await Customer.findById(req.params.id);
+
+        if (!customer) {
+            return res.status(404).json({ message: 'Customer not found' });
         }
-        res.status(200).json({ organiser });
+
+        res.status(200).json({ customer });
     } catch (error) {
-        console.error('Error getting organiser by ID:', error);
-        res.status(500).json({ message: 'Error retrieving organiser', error: error.message });
+        console.error('Error getting customer by ID:', error);
+        res.status(500).json({ message: 'Error retrieving customer', error: error.message });
     }
 };
 
-// Update organiser details
+// Update customer details
 const updateCustomer = async (req, res) => {
     try {
         const { name, email, phone } = req.body;
-        const updatedOrganiser = await Customer.findByIdAndUpdate(
+
+        // Update customer details
+        const updatedCustomer = await Customer.findByIdAndUpdate(
             req.params.id,
             { name, email, phone },
             { new: true, runValidators: true }
         );
 
-        if (!updatedOrganiser) {
-            return res.status(404).json({ message: 'Organiser not found' });
+        if (!updatedCustomer) {
+            return res.status(404).json({ message: 'Customer not found' });
         }
 
-        res.status(200).json({ message: 'Organiser updated successfully', organiser: updatedOrganiser });
+        res.status(200).json({ message: 'Customer updated successfully', customer: updatedCustomer });
     } catch (error) {
-        console.error('Error updating organiser:', error);
-        res.status(500).json({ message: 'Error updating organiser', error: error.message });
+        console.error('Error updating customer:', error);
+        res.status(500).json({ message: 'Error updating customer', error: error.message });
     }
 };
 
-// Delete organiser
+// Delete customer
 const deleteCustomer = async (req, res) => {
     try {
-        const deletedOrganiser = await Customer.findByIdAndDelete(req.params.id);
-        if (!deletedOrganiser) {
-            return res.status(404).json({ message: 'Organiser not found' });
+        const deletedCustomer = await Customer.findByIdAndDelete(req.params.id);
+
+        if (!deletedCustomer) {
+            return res.status(404).json({ message: 'Customer not found' });
         }
-        res.status(200).json({ message: 'Organiser deleted successfully' });
+
+        res.status(200).json({ message: 'Customer deleted successfully' });
     } catch (error) {
-        console.error('Error deleting organiser:', error);
-        res.status(500).json({ message: 'Error deleting organiser', error: error.message });
+        console.error('Error deleting customer:', error);
+        res.status(500).json({ message: 'Error deleting customer', error: error.message });
     }
 };
 

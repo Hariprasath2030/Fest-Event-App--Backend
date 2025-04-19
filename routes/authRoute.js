@@ -8,9 +8,13 @@ router.post('/customerSignup', customerSignup);
 // Define the route for customer login
 router.post('/customerLogin', customerLogin);
 
-// Route for customer operations
-router.get('/', getCustomerById);
+// Route for getting a specific customer by ID
+router.get('/:id', getCustomerById);
 
+// Route for updating a customer by ID
 router.put('/:id', updateCustomer);
+
+// Route for deleting a customer by ID
 router.delete('/:id', deleteCustomer);
+
 module.exports = router;
