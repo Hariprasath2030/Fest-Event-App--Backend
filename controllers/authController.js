@@ -67,52 +67,59 @@ const customerLogin = async (req, res) => {
         res.status(500).json({ message: 'Error in customer login', error: error.message });
     }
 };
-
-// Get a customer by ID
+// Get an organiser by ID
 const getCustomerById = async (req, res) => {
     try {
-        const customer = await Customer.findById(req.params.id);
-        if (!customer) {
+        const organiser = await Customer.findById(req.params.id).lean();
+        if (!organiser) {
             return res.status(404).json({ message: 'Organiser not found' });
         }
-        res.status(200).json({ customer });
+        res.status(200).json({ organiser });
     } catch (error) {
-        console.error('Error getting customer by ID:', error);
-        res.status(500).json({ message: 'Error retrieving customer', error: error.message });
+        console.error('Error getting organiser by ID:', error);
+        res.status(500).json({ message: 'Error retrieving organiser', error: error.message });
     }
 };
 
-// Update customer details
+// Update organiser details
 const updateCustomer = async (req, res) => {
     try {
         const { name, email, phone } = req.body;
-        const customer = await Customer.findByIdAndUpdate(
+        const updatedOrganiser = await Customer.findByIdAndUpdate(
             req.params.id,
             { name, email, phone },
-            { new: true }
+            { new: true, runValidators: true }
         );
-        if (!customer) {
+
+        if (!updatedOrganiser) {
             return res.status(404).json({ message: 'Organiser not found' });
         }
-        res.status(200).json({ message: 'Organiser updated successfully', customer });
+
+        res.status(200).json({ message: 'Organiser updated successfully', organiser: updatedOrganiser });
     } catch (error) {
-        console.error('Error updating customer:', error);
-        res.status(500).json({ message: 'Error updating customer', error: error.message });
+        console.error('Error updating organiser:', error);
+        res.status(500).json({ message: 'Error updating organiser', error: error.message });
     }
 };
 
-// Delete customer
+// Delete organiser
 const deleteCustomer = async (req, res) => {
     try {
-        const customer = await Customer.findByIdAndDelete(req.params.id);
-        if (!customer) {
+        const deletedOrganiser = await Customer.findByIdAndDelete(req.params.id);
+        if (!deletedOrganiser) {
             return res.status(404).json({ message: 'Organiser not found' });
         }
         res.status(200).json({ message: 'Organiser deleted successfully' });
     } catch (error) {
-        console.error('Error deleting customer:', error);
-        res.status(500).json({ message: 'Error deleting customer', error: error.message });
+        console.error('Error deleting organiser:', error);
+        res.status(500).json({ message: 'Error deleting organiser', error: error.message });
     }
 };
 
-module.exports = { customerSignup, customerLogin, getCustomerById, updateCustomer, deleteCustomer };
+module.exports = {
+    customerSignup,
+    customerLogin,
+    getCustomerById,
+    updateCustomer,
+    deleteCustomer
+};
