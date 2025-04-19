@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
     res.status(201).json(savedOrganiser);
   } catch (error) {
     console.error("Error creating organiser:", error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error", error: err.message });
   }
 });
 
@@ -44,22 +44,22 @@ router.get("/", async (req, res) => {
 // PUT update organiser
 router.put('/:id', async (req, res) => {
   try {
-      const updated = await Organiser.findByIdAndUpdate(req.params.id, req.body, { new: true });
-      if (!updated) return res.status(404).json({ message: 'Organiser not found' });
-      res.json(updated);
+    const updated = await Organiser.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updated) return res.status(404).json({ message: 'Organiser not found' });
+    res.json(updated);
   } catch (err) {
-      res.status(400).json({ message: 'Update failed', error: err.message });
+    res.status(400).json({ message: 'Update failed', error: err.message });
   }
 });
 
 // DELETE organiser
 router.delete('/:id', async (req, res) => {
   try {
-      const deleted = await Organiser.findByIdAndDelete(req.params.id);
-      if (!deleted) return res.status(404).json({ message: 'Organiser not found' });
-      res.json({ message: 'Organiser deleted successfully' });
+    const deleted = await Organiser.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ message: 'Organiser not found' });
+    res.json({ message: 'Organiser deleted successfully' });
   } catch (err) {
-      res.status(400).json({ message: 'Delete failed', error: err.message });
+    res.status(400).json({ message: 'Delete failed', error: err.message });
   }
 });
 
