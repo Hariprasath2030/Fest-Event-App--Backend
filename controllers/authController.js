@@ -67,11 +67,13 @@ const customerLogin = async (req, res) => {
         res.status(500).json({ message: 'Error in customer login', error: error.message });
     }
 };
-// Get an organiser by ID
+
 const getCustomerById = async (req, res) => {
     try {
+        console.log('Requested ID:', req.params.id); // Log the requested ID
         const organiser = await Customer.findById(req.params.id).lean();
         if (!organiser) {
+            console.log('Organiser not found'); // Debug message for not found
             return res.status(404).json({ message: 'Organiser not found' });
         }
         res.status(200).json({ organiser });
