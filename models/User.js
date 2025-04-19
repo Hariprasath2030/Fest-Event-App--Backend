@@ -7,6 +7,7 @@ const customerSchema = new mongoose.Schema({
     password: { type: String, required: [true, 'Password is required'] },
     phone: { type: Number, required: [true, 'Phone number is required'] }, // New phone field
     role: { type: String, default: 'organiser' },
+    organiserDetails: { type: organiserSchema, required: false },
 });
 
 module.exports = mongoose.model('organiser', customerSchema);
