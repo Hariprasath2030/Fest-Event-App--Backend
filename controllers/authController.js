@@ -15,7 +15,7 @@ const customerSignup = async (req, res) => {
         // Check if customer already exists
         const existingCustomer = await Customer.findOne({ email });
         if (existingCustomer) {
-            return res.status(400).json({ message: 'organiser already exists' });
+            return res.status(400).json({ message: 'Organiser already exists' });
         }
 
         // Hash the password
@@ -32,6 +32,7 @@ const customerSignup = async (req, res) => {
     }
 };
 
+// Customer login controller
 const customerLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -41,7 +42,7 @@ const customerLogin = async (req, res) => {
 
         const customer = await Customer.findOne({ email });
         if (!customer) {
-            return res.status(404).json({ message: 'organiser not found' });
+            return res.status(404).json({ message: 'Organiser not found' });
         }
 
         const isMatch = await bcrypt.compare(password, customer.password);
@@ -51,7 +52,7 @@ const customerLogin = async (req, res) => {
 
         const token = jwt.sign({ id: customer._id, role: customer.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
         res.status(200).json({
-            message: 'organiser logged in successfully',
+            message: 'Organiser logged in successfully',
             token,
             customer: {
                 id: customer._id,
@@ -62,28 +63,56 @@ const customerLogin = async (req, res) => {
             },
         });
     } catch (error) {
-        console.error('Error during customer login:', error); // Log exact error
+        console.error('Error during customer login:', error);
         res.status(500).json({ message: 'Error in customer login', error: error.message });
     }
 };
 
-// Get organiser name by ID
-const getOrganiserNameById = async (req, res) => {
+// Get a customer by ID
+const getCustomerById = async (req, res) => {
     try {
-        const { id } = req.params;
-
-        const customer = await Customer.findById(id).select("name");
+        const customer = await Customer.findById(req.params.id);
         if (!customer) {
-            return res.status(404).json({ message: "Organiser not found" });
+            return res.status(404).json({ message: 'Organiser not found' });
         }
-
-        res.status(200).json({ name: customer.name });
+        res.status(200).json({ customer });
     } catch (error) {
-        console.error("Error fetching organiser name:", error);
-        res.status(500).json({ message: "Server error", error: error.message });
+        console.error('Error getting customer by ID:', error);
+        res.status(500).json({ message: 'Error retrieving customer', error: error.message });
     }
 };
 
+// Update customer details
+const updateCustomer = async (req, res) => {
+    try {
+        const { name, email, phone } = req.body;
+        const customer = await Customer.findByIdAndUpdate(
+            req.params.id,
+            { name, email, phone },
+            { new: true }
+        );
+        if (!customer) {
+            return res.status(404).json({ message: 'Organiser not found' });
+        }
+        res.status(200).json({ message: 'Organiser updated successfully', customer });
+    } catch (error) {
+        console.error('Error updating customer:', error);
+        res.status(500).json({ message: 'Error updating customer', error: error.message });
+    }
+};
 
+// Delete customer
+const deleteCustomer = async (req, res) => {
+    try {
+        const customer = await Customer.findByIdAndDelete(req.params.id);
+        if (!customer) {
+            return res.status(404).json({ message: 'Organiser not found' });
+        }
+        res.status(200).json({ message: 'Organiser deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting customer:', error);
+        res.status(500).json({ message: 'Error deleting customer', error: error.message });
+    }
+};
 
-module.exports = { customerSignup, customerLogin, getOrganiserNameById };
+module.exports = { customerSignup, customerLogin, getCustomerById, updateCustomer, deleteCustomer };

@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { customerLogin } = require('../controllers/authController');
-const { customerSignup } = require('../controllers/authController');
-const { getOrganiserNameById } = require("../controllers/authController");
+const { customerSignup, customerLogin, getCustomerById, updateCustomer, deleteCustomer } = require('../controllers/authController');
 
 // Define the route for customer signup
 router.post('/customerSignup', customerSignup);
@@ -10,6 +8,13 @@ router.post('/customerSignup', customerSignup);
 // Define the route for customer login
 router.post('/customerLogin', customerLogin);
 
-router.get('/name/:id', getOrganiserNameById);
+// Define the route for getting a customer by ID (GET)
+router.get('/customers/:id', getCustomerById);
+
+// Define the route for updating a customer (PUT)
+router.put('/customers/:id', updateCustomer);
+
+// Define the route for deleting a customer (DELETE)
+router.delete('/customers/:id', deleteCustomer);
 
 module.exports = router;
