@@ -67,5 +67,23 @@ const customerLogin = async (req, res) => {
     }
 };
 
+// Get organiser name by ID
+const getOrganiserNameById = async (req, res) => {
+    try {
+        const { id } = req.params;
 
-module.exports = { customerSignup, customerLogin };
+        const customer = await Customer.findById(id).select("name");
+        if (!customer) {
+            return res.status(404).json({ message: "Organiser not found" });
+        }
+
+        res.status(200).json({ name: customer.name });
+    } catch (error) {
+        console.error("Error fetching organiser name:", error);
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
+
+
+module.exports = { customerSignup, customerLogin, getOrganiserNameById };
