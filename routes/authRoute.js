@@ -9,7 +9,7 @@ router.post('/customerSignup', customerSignup);
 router.post('/customerLogin', customerLogin);
 
 // Route for customer operations
-router.get('/api/customer/:id', getCustomerById);
+router.get('/', getCustomerById);
 
 router.put('/:id', updateCustomer);
 router.delete('/:id', deleteCustomer);
